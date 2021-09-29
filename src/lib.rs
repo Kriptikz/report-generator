@@ -2,11 +2,16 @@ use std::error::Error;
 use docx_rs::*;
 
 pub fn run() -> Result<(), Box<dyn Error>> {
-    generate_report();
+
+    match generate_report() {
+        Err(_) => eprintln!("Error generating report"),
+        Ok(_) => eprintln!("Report generated successfully.")
+    }
+
     Ok(())
 }
 
-fn generate_report() {
+fn generate_report() -> Result<(), DocxError> {
     let path = std::path::Path::new("./report.docx");
     let file = std::fs::File::create(&path).unwrap();
 
@@ -25,5 +30,9 @@ fn generate_report() {
             .set_grid(vec![2000, 4000, 2000])
             .layout(TableLayoutType::Fixed)
             .indent(0))
-        .page_margin(PageMargin {top: 10, left: 1750, bottom: 10, right: 0, header: 10, footer: 10, gutter: 10});
+        .page_margin(PageMargin {top: 10, left: 1750, bottom: 10, right: 0, header: 10, footer: 10, gutter: 10})
+        .build()
+        .pack(file)?;
+
+    Ok(())
 }
