@@ -1,3 +1,9 @@
+use std::process;
+
 fn main() {
-    println!("Hello, world!");
+    if let Err(e) = jareds_program::run() {
+        eprintln!("Application error: {}", e);
+
+        process::exit(1);
+    }
 }
