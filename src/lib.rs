@@ -19,12 +19,12 @@ fn generate_report() -> Result<(), DocxError> {
         .add_table(
             Table::new(vec![
                 TableRow::new(vec![
-                    TableCell::new().add_paragraph(Paragraph::new().add_run(Run::new().add_text("Simple"))),
-                    TableCell::new().add_paragraph(Paragraph::new().add_run(Run::new().add_text("Table")))
+                    make_cell("Simple"),
+                    make_cell("Table")
                 ]),
                 TableRow::new(vec![
-                    TableCell::new().add_paragraph(Paragraph::new()),
-                    TableCell::new().add_paragraph(Paragraph::new())
+                    make_cell(""),
+                    make_cell("")
                 ]),
             ]) 
             .set_grid(vec![2000, 4000, 2000])
