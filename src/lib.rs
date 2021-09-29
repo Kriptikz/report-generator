@@ -24,5 +24,6 @@ fn generate_report() {
             ]) 
             .set_grid(vec![2000, 4000, 2000])
             .layout(TableLayoutType::Fixed)
-            .indent(0));
+            .indent(0))
+        .page_margin(PageMargin {top: 10, left: 1750, bottom: 10, right: 0, header: 10, footer: 10, gutter: 10});
 }
