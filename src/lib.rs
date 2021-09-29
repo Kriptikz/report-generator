@@ -36,3 +36,7 @@ fn generate_report() -> Result<(), DocxError> {
 
     Ok(())
 }
+
+fn make_paragraph(text: &str) -> Paragraph {
+    Paragraph::new().add_run(Run::new().add_text(text))
+}
