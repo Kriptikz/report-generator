@@ -40,3 +40,7 @@ fn generate_report() -> Result<(), DocxError> {
 fn make_paragraph(text: &str) -> Paragraph {
     Paragraph::new().add_run(Run::new().add_text(text))
 }
+
+fn make_cell(text: &str) -> TableCell {
+    TableCell::new().add_paragraph(make_paragraph(text))
+}
