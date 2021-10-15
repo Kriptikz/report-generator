@@ -16,6 +16,7 @@ fn generate_report() -> Result<(), DocxError> {
     let file = std::fs::File::create(&path).unwrap();
 
     Docx::new()
+        .add_paragraph(Paragraph::new().add_run(Run::new().add_text("WAIS-IV:").bold()))
         .add_table(
             Table::new(vec![
                 TableRow::new(vec![
