@@ -18,7 +18,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         let input: &str = input.trim();
 
         match input {
-            "help" => command_help(),
+            "help" => help_menu(),
             "exit" => break,
             _ => println!("Error: No matching command: {}", input)
         }
@@ -38,7 +38,7 @@ fn print_start_text() {
     println!("===================================================\n");
 }
 
-fn command_help() {
+fn help_menu() {
     println!("\n---------------------------------------------------");
     println!("---------------------  Help  ----------------------");
     println!("---------------------------------------------------");
