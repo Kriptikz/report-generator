@@ -19,6 +19,11 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
         match input {
             "help" => help_menu(),
+            "generate report" => 
+                match generate_report() {
+                    Err(_) => eprintln!("Error generating report"),
+                    Ok(_) => eprintln!("Report generated successfully.")
+                },
             "exit" => break,
             _ => println!("Error: No matching command: {}", input)
         }
@@ -45,8 +50,9 @@ fn help_menu() {
     println!("\nreport_generator, version 0.0.1 - beta");
     println!("\nSimple docx report generator using custom chart data.\n");
     println!("\nCommands List:\n");
-    println!("help    -    brings up this help menu.");
-    println!("exit    -    exits the program.\n");
+    println!("help             -    brings up this help menu.");
+    println!("generate report  -    generates report for current client and chart data");
+    println!("exit             -    exits the program.\n");
 
 }
 
