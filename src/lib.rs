@@ -1,14 +1,53 @@
 use std::error::Error;
+use std::io;
 use docx_rs::*;
 
 pub fn run() -> Result<(), Box<dyn Error>> {
 
-    match generate_report() {
-        Err(_) => eprintln!("Error generating report"),
-        Ok(_) => eprintln!("Report generated successfully.")
+    print_start_text();
+
+    loop {
+        println!("Please enter a command, (\"help\" for a list of commands):");
+
+        let mut input = String::new();
+
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+
+        let input: &str = input.trim();
+
+        match input {
+            "help" => command_help(),
+            "exit" => break,
+            _ => continue
+        }
     }
 
+    //match generate_report() {
+    //    Err(_) => eprintln!("Error generating report"),
+    //    Ok(_) => eprintln!("Report generated successfully.")
+    //}
+
     Ok(())
+}
+
+fn print_start_text() {
+    println!("===================================================");
+    println!("=============== Report Generator ==================");
+    println!("===================================================\n");
+}
+
+fn command_help() {
+    println!("\n---------------------------------------------------");
+    println!("---------------------  Help  ----------------------");
+    println!("---------------------------------------------------");
+    println!("\nreport_generator, version 0.0.1 - beta");
+    println!("\nSimple docx report generator using custom chart data.\n");
+    println!("\nCommands List:\n");
+    println!("help    -    brings up this help menu.");
+    println!("exit    -    exits the program.\n");
+
 }
 
 fn generate_report() -> Result<(), DocxError> {
