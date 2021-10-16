@@ -20,7 +20,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         match input {
             "help" => command_help(),
             "exit" => break,
-            _ => continue
+            _ => println!("Error: No matching command: {}", input)
         }
     }
 
