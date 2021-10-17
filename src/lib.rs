@@ -2,6 +2,8 @@ use std::error::Error;
 use std::io;
 use docx_rs::*;
 use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::io::prelude::*;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 struct Range {
@@ -185,7 +187,11 @@ fn add_test(tests: &mut Vec<Test>) {
 }
 
 fn save_test(tests: &Vec<Test>) {
-    println!("Saving test...");
+    println!("\nSaving tests...");
+    let mut file = File::create(add_file_extension(&tests[0].name, "json")).expect("Error creating file");
+    let serialized_data = serde_json::to_string(&tests[0]).expect("Error serializing data");
+
+    file.write(serialized_data.as_bytes()).expect("Error writing file");
 }
 
 fn load_test(tests: &mut Vec<Test>) {
@@ -341,6 +347,16 @@ fn get_input() -> String{
     .expect("Failed to read line");
 
     input.trim().to_string()
+}
+
+fn add_file_extension(name: &str, extension: &str) -> String {
+    let mut filename = String::new();
+
+    filename.push_str(name);
+    filename.push_str(".");
+    filename.push_str(extension);
+
+    filename
 }
 
 fn is_test_loaded(name: &String, tests: &Vec<Test>) -> bool {
