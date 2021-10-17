@@ -3,26 +3,26 @@ use std::io;
 use docx_rs::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 struct Range {
     min: u32,
     max: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Test {
     name: String,
     indexes: Vec<Index>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Index {
     name: String,
     initials: String,
     subtests: Vec<Subtest>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Subtest {
     name: String,
     initials: String,
@@ -30,7 +30,7 @@ struct Subtest {
     charts: Vec<Chart>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Chart {
     age_range: Range,
     scaled_score_range: Range,
@@ -46,13 +46,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     loop {
         println!("Please enter a command, (\"help\" for a list of commands):");
 
-        let mut input = String::new();
-
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
-
-        let input: &str = input.trim();
+        let input: &str = &get_input()[..];
 
         match input {
             "help" => help_menu(),
@@ -97,7 +91,97 @@ fn help_menu() {
 }
 
 fn add_test(tests: &mut Vec<Test>) {
-    println!("Adding test...");
+    println!("\nPlease enter a test name:");
+    let input = get_input();
+
+    if is_test_loaded(&input, &tests) {
+        println!("Error: Test with name '{}' is already loaded. Maybe you want to 'add index', 'add subtest', or 'add chart'.", &input);
+        return
+    }
+
+    let mut test = Test {
+        name: String::from(input),
+        indexes: Vec::new(),
+    };
+
+    println!("\nPlease enter an index name:");
+    let name = get_input();
+
+    if is_index_loaded(&name, &tests) {
+        println!("Error: Index with name '{}' is already loaded. Maybe you want to 'add subtest' or 'add chart'.", &name);
+        return
+    }
+
+    println!("\nPlease enter the index initials:");
+    let initials = get_input();
+
+    let index = Index {
+        name: String::from(name),
+        initials: String::from(initials),
+        subtests: Vec::new(),
+    };
+
+    test.indexes.push(index);
+
+    println!("\nPlease enter a subtest name:");
+    let name = get_input();
+
+    if is_subtest_loaded(&name, &tests) {
+        println!("Error: Subtest with name '{}' is already loaded. Maybe you want to 'add index' or 'add chart'.", &name);
+        return
+    }
+
+    println!("\nPlease enter the subtest initials:");
+    let initials = get_input();
+    println!("\nPlease enter the subtest score minimum:");
+    let min: u32 = get_input().parse().expect("Please type a number!");
+    println!("\nPlease enter the subtest score maximum:");
+    let max: u32 = get_input().parse().expect("Please type a number!");
+
+    let subtest = Subtest {
+        name: String::from(name),
+        initials: String::from(initials),
+        score_range: Range{min: min, max: max},
+        charts: Vec::new(),
+    };
+
+    test.indexes[0].subtests.push(subtest);
+
+    println!("\nPlease enter the chart age range minimum:");
+    let age_min: u32 = get_input().parse().expect("Please type a number!");
+    println!("\nPlease enter the chart age range maximum:");
+    let age_max: u32 = get_input().parse().expect("Please type a number!");
+
+    let age_range = Range{min: age_min, max: age_max};
+
+    if is_chart_loaded(&age_range, &tests){
+        println!("Error: Chart with range '{:?}' is already loaded. Maybe you want to 'add subtest' or 'add index'.", &age_range);
+        return
+    }
+
+    println!("\nPlease enter the scaled score range minimum:");
+    let scaled_score_min: u32 = get_input().parse().expect("Please type a number!");
+    println!("\nPlease enter the scaled score range maximum:");
+    let scaled_score_max: u32 = get_input().parse().expect("Please type a number!");
+
+    let mut maxes: Vec<u32> = Vec::new();
+
+    for score in scaled_score_min..scaled_score_max + 1 {
+        println!("Please enter the max raw score for scaled score of {}", score);
+        let raw_score_max: u32 = get_input().parse().expect("Please type a number");
+
+        maxes.push(raw_score_max);
+    }
+
+    let chart = Chart {
+        age_range: age_range,
+        scaled_score_range: Range{min: scaled_score_min, max: scaled_score_max},
+        raw_score_maxes: maxes,
+    };
+
+    test.indexes[0].subtests[0].charts.push(chart);
+
+    tests.push(test);
 }
 
 fn save_test(tests: &Vec<Test>) {
@@ -244,4 +328,67 @@ fn make_paragraph(text: &str, text_alignment: AlignmentType, underline_line_type
 
 fn make_cell(text: &str, text_alignment: AlignmentType, underline_line_type: &str) -> TableCell {
     TableCell::new().add_paragraph(make_paragraph(text, text_alignment, underline_line_type))
+}
+
+fn get_input() -> String{
+    let mut input = String::new();
+
+    io::stdin()
+    .read_line(&mut input)
+    .expect("Failed to read line");
+
+    input.trim().to_string()
+}
+
+fn is_test_loaded(name: &String, tests: &Vec<Test>) -> bool {
+    for test in tests {
+        if *name == test.name {
+            return true
+        }
+    }
+
+    false
+}
+
+fn is_index_loaded(name: &String, tests: &Vec<Test>) -> bool {
+
+    for test in tests {
+        for index in &test.indexes {
+            if *name == index.name {
+                return true
+            }
+        }
+    }
+
+    false
+}
+
+fn is_subtest_loaded(name: &String, tests: &Vec<Test>) -> bool {
+    for test in tests {
+        for index in &test.indexes {
+            for subtest in &index.subtests {
+                if *name == subtest.name {
+                    return true
+                }
+            }
+        }
+    }
+
+    false
+}
+
+fn is_chart_loaded(age_range: &Range, tests: &Vec<Test>) -> bool {
+    for test in tests{
+        for index in &test.indexes {
+            for subtest in &index.subtests {
+                for chart in &subtest.charts {
+                    if *age_range == chart.age_range {
+                        return true
+                    }
+                }
+            }
+        }
+    }
+
+    false
 }
