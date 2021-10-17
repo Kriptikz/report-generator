@@ -44,7 +44,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let mut tests: Vec<Test> = Vec::new();
 
     loop {
-        println!("Please enter a command, (\"help\" for a list of commands):");
+        println!("\nPlease enter a command, (\"help\" for a list of commands):");
 
         let input: &str = &get_input()[..];
 
