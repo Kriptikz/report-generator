@@ -1,10 +1,47 @@
 use std::error::Error;
 use std::io;
 use docx_rs::*;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Range {
+    min: u32,
+    max: u32,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Test {
+    name: String,
+    indexes: Vec<Index>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Index {
+    name: String,
+    initials: String,
+    subtests: Vec<Subtest>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Subtest {
+    name: String,
+    initials: String,
+    score_range: Range,
+    charts: Vec<Chart>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Chart {
+    age_range: Range,
+    scaled_score_range: Range,
+    raw_score_maxes: Vec<u32>,
+}
 
 pub fn run() -> Result<(), Box<dyn Error>> {
 
     print_start_text();
+
+    let mut tests: Vec<Test> = Vec::new();
 
     loop {
         println!("Please enter a command, (\"help\" for a list of commands):");
@@ -24,15 +61,14 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                     Err(_) => eprintln!("Error generating report"),
                     Ok(_) => eprintln!("Report generated successfully.")
                 },
+            "add test" => add_test(&mut tests),
+            "save test" => save_test(&tests),
+            "load test" => load_test(&mut tests),
+            "show tests" => show_tests(&tests),
             "exit" => break,
             _ => println!("Error: No matching command: {}", input)
         }
     }
-
-    //match generate_report() {
-    //    Err(_) => eprintln!("Error generating report"),
-    //    Ok(_) => eprintln!("Report generated successfully.")
-    //}
 
     Ok(())
 }
@@ -52,8 +88,28 @@ fn help_menu() {
     println!("\nCommands List:\n");
     println!("help             -    brings up this help menu.");
     println!("generate report  -    generates report for current client and chart data");
+    println!("add test         -    add a new test into the program.");
+    println!("save test        -    save test from program into a file.");
+    println!("load test        -    load test from file into program.");
+    println!("show tests       -    shows names for loaded tests.");
     println!("exit             -    exits the program.\n");
 
+}
+
+fn add_test(tests: &mut Vec<Test>) {
+    println!("Adding test...");
+}
+
+fn save_test(tests: &Vec<Test>) {
+    println!("Saving test...");
+}
+
+fn load_test(tests: &mut Vec<Test>) {
+    println!("Loading test...");
+}
+
+fn show_tests(tests: &Vec<Test>) {
+    println!("Showing tests...");
 }
 
 fn generate_report() -> Result<(), DocxError> {
