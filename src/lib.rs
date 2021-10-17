@@ -193,7 +193,10 @@ fn load_test(tests: &mut Vec<Test>) {
 }
 
 fn show_tests(tests: &Vec<Test>) {
-    println!("Showing tests...");
+    println!("\nCurrently loaded tests:");
+    for test in tests {
+        println!("{}", test.name);
+    }
 }
 
 fn generate_report() -> Result<(), DocxError> {
