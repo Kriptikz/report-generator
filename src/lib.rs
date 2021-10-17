@@ -195,7 +195,19 @@ fn save_test(tests: &Vec<Test>) {
 }
 
 fn load_test(tests: &mut Vec<Test>) {
-    println!("Loading test...");
+    println!("\nPlease enter the name of the test to load:");
+    let input = get_input();
+
+    if is_test_loaded(&input, &tests) {
+        println!("Error: Test with name '{}' is already loaded. Maybe you want to 'add index', 'add subtest', or 'add chart'.", &input);
+        return
+    }
+
+    let file = File::open(add_file_extension(&input[..], "json")).expect("Error");
+
+    let deserialized_data: Test = serde_json::from_reader(file).expect("Error");
+
+    tests.push(deserialized_data);
 }
 
 fn show_tests(tests: &Vec<Test>) {
