@@ -1,9 +1,9 @@
 use std::error::Error;
 use std::io;
+use std::fs;
 use docx_rs::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use std::io::prelude::*;
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 struct Range {
@@ -187,11 +187,21 @@ fn add_test(tests: &mut Vec<Test>) {
 }
 
 fn save_test(tests: &Vec<Test>) {
-    println!("\nSaving tests...");
-    let mut file = File::create(add_file_extension(&tests[0].name, "json")).expect("Error creating file");
-    let serialized_data = serde_json::to_string(&tests[0]).expect("Error serializing data");
+    println!("\nPlease enter name of test to save (this will overwrite a saved test file with the same name):");
+    let name = get_input();
 
-    file.write(serialized_data.as_bytes()).expect("Error writing file");
+    for test in tests {
+        if test.name == name {
+            let serialized_data = serde_json::to_string(&test).expect("Error serializing data");
+            match fs::write(add_file_extension(&test.name, "json"), serialized_data) {
+                Ok(_) => println!("Save successful!"),
+                Err(_) => eprintln!("Error saving test '{}'.", &name),
+            }
+        }
+        else {
+            println!("Error: No test named '{}' is loaded, you need to 'add test' first.", &name);
+        }
+    }
 }
 
 fn load_test(tests: &mut Vec<Test>) {
