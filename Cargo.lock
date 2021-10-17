@@ -201,6 +201,8 @@ name = "jareds-program"
 version = "0.1.0"
 dependencies = [
  "docx-rs",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
