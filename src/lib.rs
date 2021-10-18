@@ -53,6 +53,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
         let input: &str = &get_input()[..];
 
+        // Each one of these functions will be a wrapper for the struct implementations. This keeps things consistent and easily changeable.
         match input {
             "help" => help_menu(),
             "generate report" => generate_report(),
@@ -70,8 +71,6 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-
-// This function just wraps the menus function so the calls in the match input are consistent and if I need to do something here I can.
 fn help_menu() {
     menus::print_help_menu();
 }
