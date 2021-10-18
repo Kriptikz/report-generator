@@ -61,6 +61,9 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             "save test" => save_test(&tests),
             "load test" => load_test(&mut tests),
             "show tests" => show_tests(&tests),
+            "add index" => add_index(&mut tests),
+            "add subtest" => add_subtest(&mut tests),
+            "add chart" => add_chart(&mut tests),
             "exit" => break,
             _ => println!("Error: No matching command: {}", input)
         }
@@ -90,6 +93,16 @@ fn help_menu() {
     println!("show tests       -    shows names for loaded tests.");
     println!("exit             -    exits the program.\n");
 
+}
+
+fn add_index(tests: &mut Vec<Test>) {
+}
+
+
+fn add_subtest(tests: &mut Vec<Test>) {
+}
+
+fn add_chart(tests: &mut Vec<Test>) {
 }
 
 fn add_test(tests: &mut Vec<Test>) {
