@@ -25,6 +25,7 @@ pub struct Subtest {
     pub name: String,
     pub initials: String,
     pub score_range: Range,
+    pub optional: bool,
     pub charts: Vec<Chart>,
 }
 
@@ -143,7 +144,7 @@ impl Index {
         self.subtests.push(subtest);
     }
 
-    fn has_subtest(&mut self, name: &String) -> Option<&mut Subtest> {
+    pub fn has_subtest(&mut self, name: &String) -> Option<&mut Subtest> {
         for subtest in &mut self.subtests {
             if *name == subtest.name {
                 return Some(subtest)
@@ -176,11 +177,15 @@ impl Subtest {
         let min: u32 = get_input().parse().expect("Please type a number!");
         println!("\nPlease enter the subtest score maximum:");
         let max: u32 = get_input().parse().expect("Please type a number!");
+
+        println!("\nIs this subtest optional? Please enter 'yes' or 'no':");
+        let optional: bool = get_input().parse().expect("Please enter a bool!");
     
         let mut subtest = Subtest {
             name: String::from(name),
             initials: String::from(initials),
             score_range: Range{min: min, max: max},
+            optional: optional,
             charts: Vec::new(),
         };
     
@@ -198,7 +203,7 @@ impl Subtest {
         subtest
     }
 
-    fn add_chart(&mut self) {
+    pub fn add_chart(&mut self) {
         let chart = Chart::new(self);
         self.charts.push(chart);
     }
