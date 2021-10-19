@@ -5,9 +5,11 @@ use std::fs::File;
 mod report;
 mod menus;
 mod test;
+mod client_data;
 
 pub use crate::test::Test;
 pub use crate::menus::*;
+pub use crate::client_data::*;
 
 
 pub fn run() -> Result<(), Box<dyn Error>> {
@@ -15,6 +17,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     print_start_text();
 
     let mut tests: Vec<Test> = Vec::new();
+    let mut clients: Vec<Client> = Vec::new();
 
     loop {
         println!("\nPlease enter a command, (\"help\" for a list of commands):");
@@ -32,6 +35,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             "add index" => add_index(&mut tests),
             "add subtest" => add_subtest(&mut tests),
             "add chart" => add_chart(&mut tests),
+            "add client" => add_client(&mut clients),
+            "edit client" => edit_client(&mut clients),
+            "save client" => save_client(&clients),
+            "load client" => load_client(&mut clients),
             "exit" => break,
             _ => println!("Error: No matching command: {}", input)
         }
@@ -192,6 +199,60 @@ fn add_file_extension(name: &str, extension: &str) -> String {
     filename.push_str(extension);
 
     filename
+}
+
+fn add_client(clients: &mut Vec<Client>) {
+    println!("\nPlease enter a client name:");
+    let name = get_input();
+    println!("\nPlease enter the clients age:");
+    let age = get_input().parse().expect("\nPlease enter a number!");
+
+    let mut client_position: u32 = 0;
+    if Client::is_client_loaded(&clients, &name, &mut client_position) {
+        println!("Error: Client with name '{}' is already loaded.", &name);
+        return
+    }
+
+    clients.push(Client::new(name, age));
+}
+
+fn edit_client(clients: &mut Vec<Client>) {
+    println!("\nWIP {:?}", clients);
+}
+
+fn save_client(clients: &Vec<Client>) {
+    println!("\nPlease enter name of client to save (this will overwrite a saved client file with the same name):");
+    let name = get_input();
+
+    for client in clients {
+        if client.name == name {
+            let serialized_data = serde_json::to_string(&client).expect("Error serializing data");
+            match fs::write(add_file_extension(&client.name, "json"), serialized_data) {
+                Ok(_) => println!("Save successful!"),
+                Err(_) => eprintln!("Error saving test '{}'.", &name),
+            }
+        }
+        else {
+            println!("Error: No client named '{}' is loaded, you need to 'add client' first.", &name);
+        }
+    }
+}
+
+fn load_client(clients: &mut Vec<Client>) {
+    println!("\nPlease enter the name of the client to load:");
+    let input = get_input();
+
+    let mut client_position: u32 = 0;
+    if Client::is_client_loaded(&clients, &input, &mut client_position) {
+        println!("Error: Test with name '{}' is already loaded. Maybe you want to 'add index', 'add subtest', or 'add chart'.", &input);
+        return
+    }
+
+    let file = File::open(add_file_extension(&input[..], "json")).expect("Error");
+
+    let deserialized_data: Client = serde_json::from_reader(file).expect("Error");
+
+    clients.push(deserialized_data);
 }
 
 fn is_test_loaded(name: &String, tests: &Vec<Test>, test_position: &mut u32) -> bool {
