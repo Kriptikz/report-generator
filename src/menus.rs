@@ -1,5 +1,5 @@
 use std::io;
-use crate::test::Test;
+use crate::test::*;
 
 
 pub fn get_input() -> String {
@@ -69,4 +69,21 @@ pub fn print_loaded_indexes(test: &Test) {
     }
 
     println!("Loaded Indexes: {}", indexes_list);
+}
+
+pub fn print_select_subtest(index: &mut Index) {
+    println!("\nPlease select a subtest");
+    print_loaded_subtests(&index);
+}
+
+pub fn print_loaded_subtests(index: &Index) {
+    let mut subtests_list: String = String::new();
+
+    for subtest in &index.subtests {
+        subtests_list.push_str(&subtest.name);
+        subtests_list.push(',');
+        subtests_list.push(' ');
+    }
+
+    println!("Loaded subtests: {}", subtests_list);
 }

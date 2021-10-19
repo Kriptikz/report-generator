@@ -74,9 +74,7 @@ fn add_subtest(tests: &mut Vec<Test>) {
         print_select_index(test);
         let input = get_input();
 
-        let result: Option<&mut test::Index> = test.has_index(&input);
-
-        match result {
+        match test.has_index(&input) {
             None => println!("Index {} is not loaded, please use the 'add index' or 'load test' command first.", &input),
             Some(index) => index.add_subtest(),
         }
@@ -87,7 +85,34 @@ fn add_subtest(tests: &mut Vec<Test>) {
 }
 
 fn add_chart(tests: &mut Vec<Test>) {
-    println!("\nWIP");
+    print_select_test(&tests);
+
+    let input = get_input();
+    let mut test_position: u32 = 0;
+    if is_test_loaded(&input, &tests, &mut test_position) {
+        let test: &mut Test = &mut tests[test_position as usize];
+
+        print_select_index(test);
+        let input = get_input();
+
+        let result: Option<&mut test::Index> = test.has_index(&input);
+
+        match result {
+            None => println!("Index {} is not loaded, please use the 'add index' or 'load test' command first.", &input),
+            Some(index) => 
+                {
+                    print_select_subtest(index);
+                    let input = get_input();
+                    match index.has_subtest(&input) {
+                        None => println!("Subtest {} is not loaded, please use the 'add subtest' or 'load test' command first.", &input),
+                        Some(subtest) => subtest.add_chart(),
+                    }
+                }
+        }
+    }
+    else {
+        println!("Test {} is not loaded, please use the 'add test' or 'load test' command first.", &input);
+    }
 }
 
 fn add_test(tests: &mut Vec<Test>) {
