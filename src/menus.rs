@@ -1,5 +1,6 @@
 use std::io;
 use crate::test::*;
+use crate::client_data::*;
 
 
 pub fn get_input() -> String {
@@ -34,6 +35,10 @@ pub fn print_help_menu() {
     println!("save test         -    save test from program into a file.");
     println!("load test         -    load test from file into program.");
     println!("show loaded data  -    shows all currently loaded tests, indexes, subtests, and charts.");
+    println!("add client        -    add a new client into the program.");
+    println!("edit client       -    edit a client that is loaded in the program." );
+    println!("save client       -    save a client from program into a file." );
+    println!("load client       -    load a client from a file into the program.");
     println!("exit              -    exits the program.\n");
 }
 
@@ -86,4 +91,21 @@ pub fn print_loaded_subtests(index: &Index) {
     }
 
     println!("Loaded subtests: {}", subtests_list);
+}
+
+pub fn print_select_client(clients: &Vec<Client>) {
+    println!("\nPlease select a client");
+    print_loaded_clients(clients);
+}
+
+pub fn print_loaded_clients(clients: &Vec<Client>) {
+    let mut clients_list: String = String::new();
+
+    for client in clients {
+        clients_list.push_str(&client.name);
+        clients_list.push(',');
+        clients_list.push(' ');
+    }
+
+    println!("Loaded Clients: {}", clients_list);
 }

@@ -27,7 +27,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         // Each one of these functions will be a wrapper for the struct implementations. This keeps things consistent and easily changeable.
         match input {
             "help" => help_menu(),
-            "generate report" => generate_report(),
+            "generate report" => generate_report(&mut clients, &mut tests),
             "add test" => add_test(&mut tests),
             "save test" => save_test(&tests),
             "load test" => load_test(&mut tests),
@@ -50,11 +50,35 @@ fn help_menu() {
     print_help_menu();
 }
 
-fn generate_report(){
-    match report::generate_report() {
-        Err(_) => eprintln!("Error generating report"),
-        Ok(_) => eprintln!("Report generated successfully.")
+fn generate_report(clients: &mut Vec<Client>, tests: &mut Vec<Test>){
+    print_select_test(tests);
+
+    let input = get_input();
+    let mut test_position: u32 = 0;
+    if is_test_loaded(&input, &tests, &mut test_position) {
+        let test: &mut Test = &mut tests[test_position as usize];
+
+        println!("\nPlease enter a client name:");
+        print_loaded_clients(clients);
+        let name = get_input();
+    
+        let mut client_position: u32 = 0;
+        if Client::is_client_loaded(&clients, &name, &mut client_position) {
+            let client: &mut Client = &mut clients[client_position as usize];
+
+            match report::generate_report(client, test) {
+                Err(_) => eprintln!("Error generating report"),
+                Ok(_) => eprintln!("Report generated successfully.")
+            }
+            
+        } else {
+            println!("Error: No client named {} is loaded.", name);
+        }
+        
+    } else {
+        println!("Test {} is not loaded, please use the 'add test' or 'load test' command first.", &input);
     }
+
 } 
 
 fn add_index(tests: &mut Vec<Test>) {
