@@ -1,4 +1,5 @@
 /target
 report.docx
 
-WAIS-IV.json
+*.json
+.~lock.*
