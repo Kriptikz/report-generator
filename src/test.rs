@@ -178,9 +178,10 @@ impl Subtest {
         println!("\nPlease enter the subtest score maximum:");
         let max: u32 = get_input().parse().expect("Please type a number!");
 
-        println!("\nIs this subtest optional? Please enter 'yes' or 'no':");
-        let optional: bool = get_input().parse().expect("Please enter a bool!");
-    
+        //println!("\nIs this subtest optional? Please enter 'yes' or 'no':");
+        //let input = get_input().parse().expect("Please enter a bool!");
+        let optional = false;
+
         let mut subtest = Subtest {
             name: String::from(name),
             initials: String::from(initials),
