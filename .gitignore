@@ -1,5 +1,5 @@
 /target
-report.docx
+/saves
+/reports
 
-*.json
 .~lock.*
