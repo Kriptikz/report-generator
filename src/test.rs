@@ -61,7 +61,7 @@ mod tests {
             indexes: Vec::new(),
         };
 
-        let test2 = Test::new(name.to_string());
+        let test2 = Test::new(name.to_string(), Vec::new());
 
         assert_eq!(test1, test2);
     }
