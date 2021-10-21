@@ -15,7 +15,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         let input = &input[..];
         match input {
             "exit" => break,
-            _ => println!("Error: Not maching command: {}", input),
+            _ => println!("Error: No maching command: {}", input),
         }
     }
 
