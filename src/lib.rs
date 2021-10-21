@@ -2,6 +2,7 @@ use std::error::Error;
 use std::io;
 
 mod report;
+mod test;
 
 pub fn run() -> Result<(), Box<dyn Error>> {
 
