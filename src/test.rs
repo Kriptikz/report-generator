@@ -17,6 +17,7 @@ pub struct Test {
 pub struct Index {
     pub name: String,
     pub initials: String,
+    pub equivalents_chart: Chart,
     pub subtests: Vec<Subtest>,
 }
 
@@ -34,6 +35,7 @@ pub struct Chart {
     pub age_range: Range,
     pub scaled_score_range: Range,
     pub raw_score_maxes: Vec<u32>,
+    pub percentile_ranks: Vec<f32>,
 }
 
 impl Test {
@@ -122,6 +124,7 @@ impl Index {
         let mut index = Index {
             name: String::from(name),
             initials: String::from(&initials),
+            equivalents_chart: create_equivalents_chart(),
             subtests: Vec::new(),
         };
     
@@ -152,6 +155,54 @@ impl Index {
         }
     
         None
+    }
+}
+
+fn create_equivalents_chart() -> Chart {
+    println!("\nPlease enter Sum of Scaled Scores minimum:");
+    let min = get_input_u32();
+    println!("\nPlease enter Sum of Scaled Scores maximum:");
+    let max = get_input_u32();
+
+    let mut equivalents: Vec<u32> = Vec::new();
+    let mut ranks: Vec<f32> = Vec::new();
+    
+    for score in min..max + 1 {
+        println!("Please enter the equivalent score for scaled score sum of {}", score);
+        let equivalent_score: u32 = get_input_u32();
+        println!("\nPlease enter the percentile rank for scaled score sum of {}", score);
+        let rank: f32 = get_input_float();
+
+        equivalents.push(equivalent_score);
+        ranks.push(rank);
+    }
+
+    let chart = Chart {
+        age_range: Range{min: 0,max: 0},
+        scaled_score_range: Range {min, max},
+        raw_score_maxes: equivalents,
+        percentile_ranks: ranks,
+    };
+
+    chart
+
+}
+
+fn get_input_u32() -> u32 {
+    loop {
+        match get_input().parse::<u32>() {
+            Ok(input) => return input,
+            Err(_) => println!("Please enter a valid unsigned number!"),
+        }
+    }
+}
+
+fn get_input_float() -> f32 {
+    loop {
+        match get_input().parse::<f32>() {
+            Ok(input) => return input,
+            Err(_) => println!("Please enter valid decimal number"),
+        }
     }
 }
 
@@ -255,6 +306,7 @@ impl Chart {
             age_range: age_range,
             scaled_score_range: Range{min: scaled_score_min, max: scaled_score_max},
             raw_score_maxes: maxes,
+            percentile_ranks: Vec::new(),
         };
     
         chart
