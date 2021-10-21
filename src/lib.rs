@@ -4,10 +4,21 @@ mod report;
 
 pub fn run() -> Result<(), Box<dyn Error>> {
 
-    match report::generate_report() {
-        Err(_) => eprintln!("Error generating report"),
-        Ok(_) => eprintln!("Report generated successfully.")
+    loop {
+        println!("\nPlease enter a command, (\"help\" for a list of commands):");
+
+        let input: &str = &get_input()[..];
+
+
+        match input {
+            "exit" => break,
+            _ => println!("Error: Not maching command: {}", input),
+        }
     }
 
     Ok(())
+}
+
+fn get_input() -> String{
+    String::from("get_input() not implemented.")
 }
