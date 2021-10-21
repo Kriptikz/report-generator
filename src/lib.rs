@@ -12,7 +12,10 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 }
 
 fn generate_report() -> Result<(), DocxError> {
-    let path = std::path::Path::new("./report.docx");
+    
+    let mut full_file_path: String = String::new();
+    full_file_path.push_str(&String::from("./reports/report.docx"));
+    let path = std::path::Path::new(&full_file_path);
     let file = std::fs::File::create(&path).unwrap();
 
     let description = "This is a simple description paragraph that is work in progress. This will be updated with actual text that the user will include. This is also a test for how line wrapping works.";
