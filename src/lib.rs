@@ -161,12 +161,19 @@ fn add_test(tests: &mut Vec<Test>) {
 
 fn save_test(tests: &Vec<Test>) {
     println!("\nPlease enter name of test to save (this will overwrite a saved test file with the same name):");
+    print_loaded_tests(tests);
     let name = get_input();
 
     for test in tests {
         if test.name == name {
             let serialized_data = serde_json::to_string(&test).expect("Error serializing data");
-            match fs::write(add_file_extension(&test.name, "json"), serialized_data) {
+
+            let mut full_file_path: String = String::new();
+            full_file_path.push_str(&String::from("./saves/"));
+            full_file_path.push_str(&test.name);
+            full_file_path.push_str(&String::from(".json"));
+
+            match fs::write(&full_file_path, serialized_data) {
                 Ok(_) => println!("Save successful!"),
                 Err(_) => eprintln!("Error saving test '{}'.", &name),
             }
@@ -187,7 +194,12 @@ fn load_test(tests: &mut Vec<Test>) {
         return
     }
 
-    let file = File::open(add_file_extension(&input[..], "json")).expect("Error");
+    let mut full_file_path: String = String::new();
+    full_file_path.push_str(&String::from("./saves/"));
+    full_file_path.push_str(&input);
+    full_file_path.push_str(&String::from(".json"));
+
+    let file = File::open(full_file_path).expect("Error");
 
     let deserialized_data: Test = serde_json::from_reader(file).expect("Error");
 
@@ -215,16 +227,6 @@ fn show_loaded_data(tests: &Vec<Test>) {
     }
 }
 
-fn add_file_extension(name: &str, extension: &str) -> String {
-    let mut filename = String::new();
-
-    filename.push_str(name);
-    filename.push_str(".");
-    filename.push_str(extension);
-
-    filename
-}
-
 fn add_client(clients: &mut Vec<Client>) {
     println!("\nPlease enter a client name:");
     let name = get_input();
@@ -246,12 +248,17 @@ fn edit_client(clients: &mut Vec<Client>) {
 
 fn save_client(clients: &Vec<Client>) {
     println!("\nPlease enter name of client to save (this will overwrite a saved client file with the same name):");
+    print_loaded_clients(clients);
     let name = get_input();
 
     for client in clients {
         if client.name == name {
+            let mut full_file_path: String = String::new();
+            full_file_path.push_str(&String::from("./saves/"));
+            full_file_path.push_str(&client.name);
+            full_file_path.push_str(&String::from(".json"));
             let serialized_data = serde_json::to_string(&client).expect("Error serializing data");
-            match fs::write(add_file_extension(&client.name, "json"), serialized_data) {
+            match fs::write(&full_file_path, serialized_data) {
                 Ok(_) => println!("Save successful!"),
                 Err(_) => eprintln!("Error saving test '{}'.", &name),
             }
@@ -272,7 +279,12 @@ fn load_client(clients: &mut Vec<Client>) {
         return
     }
 
-    let file = File::open(add_file_extension(&input[..], "json")).expect("Error");
+    let mut full_file_path: String = String::new();
+    full_file_path.push_str(&String::from("./saves/"));
+    full_file_path.push_str(&input);
+    full_file_path.push_str(&String::from(".json"));
+
+    let file = File::open(&full_file_path).expect("Error");
 
     let deserialized_data: Client = serde_json::from_reader(file).expect("Error");
 

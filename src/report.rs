@@ -4,7 +4,13 @@ pub use crate::client_data::*;
 
 pub fn generate_report(client: &mut Client, test: &mut Test) -> Result<(), DocxError> {
 
-    let path = std::path::Path::new("./report.docx");
+    let mut full_file_path: String = String::new();
+    full_file_path.push_str(&String::from("./reports/"));
+    full_file_path.push_str(&client.name);
+    full_file_path.push_str(&String::from("_report"));
+    full_file_path.push_str(&String::from(".docx"));
+
+    let path = std::path::Path::new(&full_file_path);
     let file = std::fs::File::create(&path).unwrap();
 
 
@@ -23,29 +29,66 @@ pub fn generate_report(client: &mut Client, test: &mut Test) -> Result<(), DocxE
     // convert to string slice
     let client_description = &client_description[..];
 
+    // ----------------------------------------------------
+    // Verbal Comprehension (VCI)
     let waisiv_si_scaled_score = &*get_score_as_string(client, test, &String::from("Verbal Comprehension"), &String::from("Similarities"));
     let waisiv_vc_scaled_score = &*get_score_as_string(client, test, &String::from("Verbal Comprehension"), &String::from("Vocabulary"));
     let waisiv_in_scaled_score = &*get_score_as_string(client, test, &String::from("Verbal Comprehension"), &String::from("Information"));
     let waisiv_co_scaled_score = &*get_score_as_string(client, test, &String::from("Verbal Comprehension"), &String::from("Comprehension"));
 
+    let vci_sum: u32 = get_u32_from_string(&String::from(waisiv_si_scaled_score))
+        + get_u32_from_string(&String::from(waisiv_vc_scaled_score))
+        + get_u32_from_string(&String::from(waisiv_in_scaled_score));
+
+    let waisiv_vci_sum_score = get_scaled_score_equivalent_as_string(client, test, &String::from("Verbal Comprehension"), &String::from("Similarities"), vci_sum);
+
+
+    // ----------------------------------------------------
+    // Perceptual Reasoning (PRI)
     let waisiv_bd_scaled_score = &*get_score_as_string(client, test, &String::from("Perceptual Reasoning"), &String::from("Block Design"));
     let waisiv_mr_scaled_score = &*get_score_as_string(client, test, &String::from("Perceptual Reasoning"), &String::from("Matrix Reasoning"));
     let waisiv_vp_scaled_score = &*get_score_as_string(client, test, &String::from("Perceptual Reasoning"), &String::from("Visual Puzzles"));
     let waisiv_fw_scaled_score = &*get_score_as_string(client, test, &String::from("Perceptual Reasoning"), &String::from("Figure Weights"));
     let waisiv_pc_scaled_score = &*get_score_as_string(client, test, &String::from("Perceptual Reasoning"), &String::from("Picture Completion"));
 
+    let pri_sum: u32 = get_u32_from_string(&String::from(waisiv_bd_scaled_score))
+    + get_u32_from_string(&String::from(waisiv_mr_scaled_score))
+    + get_u32_from_string(&String::from(waisiv_vp_scaled_score))
+    + get_u32_from_string(&String::from(waisiv_fw_scaled_score))
+    + get_u32_from_string(&String::from(waisiv_pc_scaled_score));
+
+    let waisiv_pri_sum_score = get_scaled_score_equivalent_as_string(client, test, &String::from("Perceptual Reasoning"), &String::from("Similarities"), pri_sum);
+
+    // ----------------------------------------------------
+    // Working Memory (WMI)
     let waisiv_ds_scaled_score = &*get_score_as_string(client, test, &String::from("Working Memory"), &String::from("Digit Span"));
     let waisiv_ar_scaled_score = &*get_score_as_string(client, test, &String::from("Working Memory"), &String::from("Arithmetic"));
     let waisiv_ln_scaled_score = &*get_score_as_string(client, test, &String::from("Working Memory"), &String::from("Letter-Number Seq."));
 
+    let wmi_sum: u32 = get_u32_from_string(&String::from(waisiv_ds_scaled_score))
+    + get_u32_from_string(&String::from(waisiv_ar_scaled_score))
+    + get_u32_from_string(&String::from(waisiv_ln_scaled_score));
+
+    let waisiv_wmi_sum_score = get_scaled_score_equivalent_as_string(client, test, &String::from("Working Memory"), &String::from("Similarities"), wmi_sum);
+
+
+    // ----------------------------------------------------
+    // Processing Speed (PSI)
     let waisiv_ss_scaled_score = &*get_score_as_string(client, test, &String::from("Processing Speed"), &String::from("Symbol Search"));
     let waisiv_cd_scaled_score = &*get_score_as_string(client, test, &String::from("Processing Speed"), &String::from("Coding"));
     let waisiv_ca_scaled_score = &*get_score_as_string(client, test, &String::from("Processing Speed"), &String::from("Cancellation"));
 
+    let psi_sum: u32 = get_u32_from_string(&String::from(waisiv_ss_scaled_score))
+    + get_u32_from_string(&String::from(waisiv_cd_scaled_score))
+    + get_u32_from_string(&String::from(waisiv_ca_scaled_score));
+
+    let waisiv_psi_sum_score = get_scaled_score_equivalent_as_string(client, test, &String::from("Processing Speed"), &String::from("Similarities"), psi_sum);
 
 
-    let test_description = "This is a simple description paragraph that is work in progress. This will be updated with actual text that the user will include. This is also a test for how line wrapping works.";
 
+
+    //let test_description = "This is a simple description paragraph that is work in progress. This will be updated with actual text that the user will include. This is also a test for how line wrapping works.";
+    let test_description = "The WAIS-IV is";
     Docx::new()
         .add_paragraph(Paragraph::new().add_run(Run::new().add_text("WAIS-IV:").bold()))
         .add_paragraph(make_paragraph(client_description, AlignmentType::Left, "none"))
@@ -61,33 +104,33 @@ pub fn generate_report(client: &mut Client, test: &mut Test) -> Result<(), DocxE
                 ]),
                 TableRow::new(vec![
                     make_cell("Verbal Comprehension (VCI)", AlignmentType::Left, "none"),
-                    make_cell("118", AlignmentType::Center, "none"),
-                    make_cell("88", AlignmentType::Center, "none"),
-                    make_cell("High Average", AlignmentType::Center, "none"),
+                    make_cell(&waisiv_vci_sum_score.0, AlignmentType::Center, "none"),
+                    make_cell(&waisiv_vci_sum_score.1, AlignmentType::Center, "none"),
+                    make_cell("WIP", AlignmentType::Center, "none"),
                 ]),
                 TableRow::new(vec![
                     make_cell("Perceptual Reasoning (PRI)", AlignmentType::Left, "none"),
-                    make_cell("104", AlignmentType::Center, "none"),
-                    make_cell("61", AlignmentType::Center, "none"),
-                    make_cell("Average", AlignmentType::Center, "none"),
+                    make_cell(&waisiv_pri_sum_score.0, AlignmentType::Center, "none"),
+                    make_cell(&waisiv_pri_sum_score.1, AlignmentType::Center, "none"),
+                    make_cell("WIP", AlignmentType::Center, "none"),
                 ]),
                 TableRow::new(vec![
                     make_cell("Working Memory (WMI)", AlignmentType::Left, "none"),
-                    make_cell("97", AlignmentType::Center, "none"),
-                    make_cell("42", AlignmentType::Center, "none"),
-                    make_cell("Average", AlignmentType::Center, "none"),
+                    make_cell(&waisiv_wmi_sum_score.0, AlignmentType::Center, "none"),
+                    make_cell(&waisiv_wmi_sum_score.1, AlignmentType::Center, "none"),
+                    make_cell("WIP", AlignmentType::Center, "none"),
                 ]),
                 TableRow::new(vec![
                     make_cell("Processing Speed (PSI)", AlignmentType::Left, "none"),
-                    make_cell("94", AlignmentType::Center, "none"),
-                    make_cell("34", AlignmentType::Center, "none"),
-                    make_cell("Average", AlignmentType::Center, "none"),
+                    make_cell(&waisiv_psi_sum_score.0, AlignmentType::Center, "none"),
+                    make_cell(&waisiv_psi_sum_score.1, AlignmentType::Center, "none"),
+                    make_cell("WIP", AlignmentType::Center, "none"),
                 ]),
                 TableRow::new(vec![
                     make_cell("Full Scale IQ (FSIQ)", AlignmentType::Left, "none"),
-                    make_cell("106", AlignmentType::Center, "none"),
-                    make_cell("66", AlignmentType::Center, "none"),
-                    make_cell("Average", AlignmentType::Center, "none"),
+                    make_cell(&waisiv_psi_sum_score.0, AlignmentType::Center, "none"),
+                    make_cell(&waisiv_psi_sum_score.1, AlignmentType::Center, "none"),
+                    make_cell("WIP", AlignmentType::Center, "none"),
                 ]),
             ]) 
             .set_grid(vec![2000, 6500, 2000])
@@ -175,6 +218,15 @@ fn make_cell(text: &str, text_alignment: AlignmentType, underline_line_type: &st
     TableCell::new().add_paragraph(make_paragraph(text, text_alignment, underline_line_type))
 }
 
+fn get_u32_from_string(string: &String) -> u32 {
+    match string.parse::<u32>() {
+        Ok(number) => return number,
+        Err(_) => (),
+    }
+
+    0
+}
+
 fn get_score_as_string(client: &mut Client, test: &mut Test, index_name: &String, subtest_name: &String) -> String {
 
     let mut string_scaled_score = String::new();
@@ -217,4 +269,44 @@ fn get_scaled_score(client: &mut Client, test: &mut Test, index_name: &String, s
     }
 
     None
+}
+
+fn get_scaled_score_equivalent_as_string(client: &mut Client, test: &mut Test, index_name: &String, subtest_name: &String, score: u32) -> (String, String) {
+
+    let mut string_scaled_score = String::new();
+    let mut string_rank = String::new();
+
+    match get_scaled_score_equivalent(client, test, index_name, subtest_name, score) {
+        Some(scaled_score) => {
+            string_scaled_score.push_str(&scaled_score.0.to_string());
+            string_rank.push_str(&scaled_score.1.to_string());
+        },
+        None => string_scaled_score.push('x'),
+    }
+
+
+    (string_scaled_score, string_rank)
+}
+
+fn get_scaled_score_equivalent(client: &mut Client, test: &mut Test, index_name: &String, subtest_name: &String, score: u32) -> Option<(u32, f32)> {
+    match test.has_index(index_name) {
+        Some(index) => {
+            // find out spot in the raw_score_maxes_equivalents using a counter
+            let mut counter: u32 = 0;
+            for sum in index.equivalents_chart.scaled_score_range.min..index.equivalents_chart.scaled_score_range.max {
+                if sum == score {
+                    break;
+                }
+                counter += 1;
+            }
+
+            let equivalent = index.equivalents_chart.raw_score_maxes[counter as usize];
+            let rank = index.equivalents_chart.percentile_ranks[counter as usize];
+
+            return Some((equivalent, rank))
+        }
+        None => (),
+    }
+
+    None 
 }
