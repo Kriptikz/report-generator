@@ -44,6 +44,14 @@ impl Range {
             max: max,
         }
     }
+
+    fn get_min(&self) -> u32 {
+        self.min
+    }
+
+    fn get_max(&self) -> u32 {
+        self.max
+    }
 }
 
 
@@ -88,6 +96,26 @@ impl Index {
             subtests: subtests,
         }
     }
+
+    fn get_name(&self) -> &String {
+        &self.name
+    }
+
+    fn get_initials(&self) -> &String {
+        &self.initials
+    }
+
+    fn get_equivalents_chart(&self) -> &Chart {
+        &self.equivalents_chart
+    }
+
+    fn get_subtests(&self) -> Option<&Vec<Subtest>> {
+        if self.subtests.len() > 0 {
+            return Some(&self.subtests)
+        }
+
+        None
+    }
 }
 
 impl Subtest {
@@ -127,80 +155,6 @@ mod testing
             raw_score_maxes: Vec::new(),
             percentile_ranks: Vec::new(),
         }
-    }
-
-    #[cfg(test)]
-    mod test_constructors_new {
-        use super::*;
-    
-        #[test]
-        fn new_index_no_subtests_blank_eq_chart() {
-            let name = "name";
-            let initials = "na";
-            let range = &Range { min: 0, max: 0 };
-    
-            let eq_chart = Chart {
-                age_range: *range,
-                scaled_score_range: *range,
-                raw_score_maxes: Vec::new(),
-                percentile_ranks: Vec::new(),
-            };
-    
-            let index1 = Index {
-                name: name.to_string(),
-                initials: initials.to_string(),
-                equivalents_chart: eq_chart,
-                subtests: Vec::new(),
-            };
-    
-            let eq_chart = Chart {
-                age_range: *range,
-                scaled_score_range: *range,
-                raw_score_maxes: Vec::new(),
-                percentile_ranks: Vec::new(),
-            };
-    
-            let index2 = Index::new(name.to_string(), initials.to_string(), eq_chart, Vec::new());
-    
-            assert_eq!(index1, index2);
-        }
-    
-        #[test]
-        fn new_subtest_no_charts() {
-            let name = "name";
-            let initials = "na";
-            let range = &Range { min: 0, max: 0 };
-            let optional = false;
-    
-            let subtest1 = Subtest {
-                name: name.to_string(),
-                initials: initials.to_string(),
-                score_range: *range,
-                optional: optional,
-                charts: Vec::new(),
-            };
-    
-            let subtest2 = Subtest::new(name.to_string(), initials.to_string(), *range, optional, Vec::new());
-    
-            assert_eq!(subtest1, subtest2);
-        }
-    
-        #[test]
-        fn new_default_chart() {
-            let range = &Range { min: 0, max: 0 };
-    
-            let chart1 = Chart {
-                age_range: *range,
-                scaled_score_range: *range,
-                raw_score_maxes: Vec::new(),
-                percentile_ranks: Vec::new(),
-            };
-    
-            let chart2 = Chart::new(*range, *range, Vec::new(), Vec::new());
-    
-            assert_eq!(chart1, chart2);
-        }
-    
     }
     
     #[cfg(test)]
@@ -291,16 +245,168 @@ mod testing
     
     #[cfg(test)]
     mod index_methods {
+        use super::*;
+
+        #[test]
+        fn new() {
+            let name = "name";
+            let initials = "na";
+            let range = &Range { min: 0, max: 0 };
+    
+            let eq_chart = Chart {
+                age_range: *range,
+                scaled_score_range: *range,
+                raw_score_maxes: Vec::new(),
+                percentile_ranks: Vec::new(),
+            };
+    
+            let index1 = Index {
+                name: name.to_string(),
+                initials: initials.to_string(),
+                equivalents_chart: eq_chart,
+                subtests: Vec::new(),
+            };
+    
+            let eq_chart = Chart {
+                age_range: *range,
+                scaled_score_range: *range,
+                raw_score_maxes: Vec::new(),
+                percentile_ranks: Vec::new(),
+            };
+    
+            let index2 = Index::new(name.to_string(), initials.to_string(), eq_chart, Vec::new());
+    
+            assert_eq!(index1, index2);
+        }
+
+        #[test]
+        fn get_name() {
+            let name = "name";
+            let initials = "na";
+    
+            let index = Index::new(name.to_string(), initials.to_string(), default_chart(), Vec::new());
+            let name2 = index.get_name();
+    
+            assert_eq!(name.to_string(), *name2);
+        }
+
+        #[test]
+        fn get_initials() {
+            let name = "name";
+            let initials = "na";
+    
+            let index = Index::new(name.to_string(), initials.to_string(), default_chart(), Vec::new());
+            let initials2 = index.get_initials();
+    
+            assert_eq!(initials.to_string(), *initials2);
+        }
+
+        #[test]
+        fn get_equivalents_chart() {
+            let name = "name";
+            let initials = "na";
+
+            let range = &Range { min: 5, max: 10 };
+
+            let equiv_chart = Chart {
+                age_range: *range,
+                scaled_score_range: *range,
+                raw_score_maxes: Vec::new(),
+                percentile_ranks: Vec::new(),
+            };
+    
+            let index = Index::new(name.to_string(), initials.to_string(), equiv_chart, Vec::new());
+
+            let equiv_chart = Chart {
+                age_range: *range,
+                scaled_score_range: *range,
+                raw_score_maxes: Vec::new(),
+                percentile_ranks: Vec::new(),
+            };
+
+            let equiv_chart2 = index.get_equivalents_chart();
+    
+            assert_eq!(equiv_chart, *equiv_chart2);
+        }
+
+        #[test]
+        fn get_subests() {
+            let index_name = "Index_name";
+            let index_initials = "IN";
+            let subtest_name = "Subtest_name";
+            let subtest_initials = "SN";
+            let range = &Range {min: 1, max: 12};
+            let optional = false;
+            let mut subtests_error: Vec<Subtest> = Vec::new();
+    
+            let mut subtests: Vec<Subtest> = Vec::new();
+            let subtest = Subtest::new(subtest_name.to_string(), subtest_initials.to_string(), *range, optional, Vec::new());
+            subtests.push(subtest);
+    
+            let subtest_error = Subtest::new("Error".to_string(), "ERROR".to_string(), *range, optional, Vec::new());
+            subtests_error.push(subtest_error);
+    
+            let index = Index::new(index_name.to_string(), index_initials.to_string(), default_chart(), subtests);
+    
+            let mut subtests: Vec<Subtest> = Vec::new();
+            let subtest = Subtest::new(subtest_name.to_string(), subtest_initials.to_string(), *range, optional, Vec::new());
+            subtests.push(subtest);
+    
+            let subtests2: &Vec<Subtest>;
+            match index.get_subtests() {
+                Some(subtests) => subtests2 = &subtests,
+                None => subtests2 = &subtests_error,
+            }
+    
+            assert_eq!(subtests, *subtests2);
+        }
     
     }
 
     #[cfg(test)]
     mod subtest_methods {
+        use super::*;
+        
+        #[test]
+        fn new() {
+            let name = "name";
+            let initials = "na";
+            let range = &Range { min: 0, max: 0 };
+            let optional = false;
     
+            let subtest1 = Subtest {
+                name: name.to_string(),
+                initials: initials.to_string(),
+                score_range: *range,
+                optional: optional,
+                charts: Vec::new(),
+            };
+    
+            let subtest2 = Subtest::new(name.to_string(), initials.to_string(), *range, optional, Vec::new());
+    
+            assert_eq!(subtest1, subtest2);
+        }
     }
 
     #[cfg(test)]
     mod chart_methods {
+        use super::*;
+
+        #[test]
+        fn new() {
+            let range = &Range { min: 0, max: 0 };
+    
+            let chart1 = Chart {
+                age_range: *range,
+                scaled_score_range: *range,
+                raw_score_maxes: Vec::new(),
+                percentile_ranks: Vec::new(),
+            };
+    
+            let chart2 = Chart::new(*range, *range, Vec::new(), Vec::new());
+    
+            assert_eq!(chart1, chart2);
+        }
     
     }
 
@@ -315,6 +421,22 @@ mod testing
             let range2 = Range::new(0,0);
     
             assert_eq!(range1, range2);
+        }
+
+        #[test]
+        fn get_min() {
+            let min: u32 = 4;
+            let range1 = Range { min: min, max: 5};
+    
+            assert_eq!(range1.get_min(), min);
+        }
+
+        #[test]
+        fn get_max() {
+            let max: u32 = 8;
+            let range1 = Range { min: 4, max: max};
+    
+            assert_eq!(range1.get_max(), max);
         }
     }
 }
