@@ -128,6 +128,30 @@ impl Subtest {
             charts: charts,
         }
     } 
+
+    fn get_name(&self) -> &String {
+        &self.name
+    }
+
+    fn get_initials(&self) -> &String {
+        &self.initials
+    }
+
+    fn get_score_range(&self) -> &Range {
+        &self.score_range
+    }
+
+    fn is_optional(&self) -> bool {
+        self.optional
+    }
+
+    fn get_charts(&self) -> Option<&Vec<Chart>> {
+        if self.charts.len() > 0 {
+            return Some(&self.charts)
+        }
+
+        None
+    }
 }
 
 impl Chart {
@@ -386,6 +410,104 @@ mod testing
     
             assert_eq!(subtest1, subtest2);
         }
+
+        #[test]
+        fn get_name() {
+            let name = "name";
+            let initials = "na";
+
+            let score_range = Range::new(2,9);
+            let optional = false;
+    
+            let subtest = Subtest::new(name.to_string(), initials.to_string(), score_range, optional, Vec::new());
+            let name2 = subtest.get_name();
+    
+            assert_eq!(name.to_string(), *name2);
+        }
+
+        #[test]
+        fn get_initials() {
+            let name = "name";
+            let initials = "na";
+            let score_range = Range::new(2,9);
+            let optional = false;
+    
+            let subtest = Subtest::new(name.to_string(), initials.to_string(), score_range, optional, Vec::new());
+            let initials2 = subtest.get_initials();
+    
+            assert_eq!(initials.to_string(), *initials2);
+        }
+
+        #[test]
+        fn get_score_range() {
+            let range = &Range::new(2,9);
+            
+            let name = "name";
+            let initials = "na";
+            let score_range = *range;
+            let optional = false;
+    
+            let subtest = Subtest::new(name.to_string(), initials.to_string(), score_range, optional, Vec::new());
+            let score_range2 = subtest.get_score_range();
+    
+            assert_eq!(*range, *score_range2);
+        }
+
+        #[test]
+        fn is_optional() {
+            let range = &Range::new(2,9);
+            
+            let name = "name";
+            let initials = "na";
+            let score_range = *range;
+            let optional = false;
+    
+            let subtest = Subtest::new(name.to_string(), initials.to_string(), score_range, optional, Vec::new());
+            let optional2 = subtest.is_optional();
+    
+            assert_eq!(optional, optional2);
+        }
+
+        #[test]
+        fn get_charts() {
+            let subtest_name = "Subtest_name";
+            let subtest_initials = "SN";
+            let range = &Range::new(1,12);
+            let optional = false;
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let percentile_ranks: Vec<f32> = Vec::new();
+
+            let mut charts_error: Vec<Chart> = Vec::new();
+    
+            let mut charts: Vec<Chart> = Vec::new();
+            let chart = Chart::new(*range, *range, raw_score_maxes, percentile_ranks);
+            charts.push(chart);
+
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let percentile_ranks: Vec<f32> = Vec::new();
+    
+            let range2 = &Range::new(2,9);
+            let chart_error = Chart::new(*range2, *range2, raw_score_maxes, percentile_ranks);
+            charts_error.push(chart_error);
+
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let percentile_ranks: Vec<f32> = Vec::new();
+    
+            let subtest = Subtest::new(subtest_name.to_string(), subtest_initials.to_string(), *range, optional, charts);
+    
+            let mut charts: Vec<Chart> = Vec::new();
+            let chart = Chart::new(*range, *range, raw_score_maxes, percentile_ranks);
+            charts.push(chart);
+    
+            let charts2: &Vec<Chart>;
+            match subtest.get_charts() {
+                Some(charts) => charts2 = &charts,
+                None => charts2 = &charts_error,
+            }
+    
+            assert_eq!(charts, *charts2);
+        }
+        
     }
 
     #[cfg(test)]
