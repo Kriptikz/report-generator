@@ -163,6 +163,22 @@ impl Chart {
             percentile_ranks: percentile_ranks,
         }
     }
+
+    fn get_age_range(&self) -> &Range {
+        &self.age_range
+    }
+
+    fn get_scaled_score_range(&self) -> &Range {
+        &self.scaled_score_range
+    }
+
+    fn get_raw_score_maxes(&self) -> &Vec<u32>{
+        &self.raw_score_maxes
+    }
+
+    fn get_percentile_ranks(&self) -> &Vec<f32> {
+        &self.percentile_ranks
+    }
 }
 
 
@@ -416,7 +432,7 @@ mod testing
             let name = "name";
             let initials = "na";
 
-            let score_range = Range::new(2,9);
+            let score_range = Range::new(2, 9);
             let optional = false;
     
             let subtest = Subtest::new(name.to_string(), initials.to_string(), score_range, optional, Vec::new());
@@ -429,7 +445,7 @@ mod testing
         fn get_initials() {
             let name = "name";
             let initials = "na";
-            let score_range = Range::new(2,9);
+            let score_range = Range::new(2, 9);
             let optional = false;
     
             let subtest = Subtest::new(name.to_string(), initials.to_string(), score_range, optional, Vec::new());
@@ -440,7 +456,7 @@ mod testing
 
         #[test]
         fn get_score_range() {
-            let range = &Range::new(2,9);
+            let range = &Range::new(2, 9);
             
             let name = "name";
             let initials = "na";
@@ -455,7 +471,7 @@ mod testing
 
         #[test]
         fn is_optional() {
-            let range = &Range::new(2,9);
+            let range = &Range::new(2, 9);
             
             let name = "name";
             let initials = "na";
@@ -472,7 +488,7 @@ mod testing
         fn get_charts() {
             let subtest_name = "Subtest_name";
             let subtest_initials = "SN";
-            let range = &Range::new(1,12);
+            let range = &Range::new(1, 12);
             let optional = false;
             let raw_score_maxes: Vec<u32> = Vec::new();
             let percentile_ranks: Vec<f32> = Vec::new();
@@ -528,6 +544,76 @@ mod testing
             let chart2 = Chart::new(*range, *range, Vec::new(), Vec::new());
     
             assert_eq!(chart1, chart2);
+        }
+
+        #[test]
+        fn get_age_range() {
+            let age_range = &Range::new(20, 24);
+            
+            let scaled_score_range = &Range::new(1, 19);
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let percentile_ranks: Vec<f32> = Vec::new();
+    
+            let chart = Chart::new(*age_range, *scaled_score_range, raw_score_maxes, percentile_ranks);
+            let age_range2 = chart.get_age_range();
+    
+            assert_eq!(*age_range, *age_range2);
+        }
+
+        #[test]
+        fn get_scaled_score_range() {
+            let age_range = &Range::new(20, 24);
+            
+            let scaled_score_range = &Range::new(1, 19);
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let percentile_ranks: Vec<f32> = Vec::new();
+    
+            let chart = Chart::new(*age_range, *scaled_score_range, raw_score_maxes, percentile_ranks);
+            let scaled_score_range2 = chart.get_scaled_score_range();
+    
+            assert_eq!(*scaled_score_range, *scaled_score_range2);
+        }
+
+        #[test]
+        fn get_raw_score_maxes() {
+            let age_range = &Range::new(20, 24);
+            
+            let scaled_score_range = &Range::new(1, 19);
+            let mut raw_score_maxes: Vec<u32> = Vec::new();
+            raw_score_maxes.push(10);
+            raw_score_maxes.push(12);
+            let percentile_ranks: Vec<f32> = Vec::new();
+    
+            let chart = Chart::new(*age_range, *scaled_score_range, raw_score_maxes, percentile_ranks);
+
+            let mut raw_score_maxes: Vec<u32> = Vec::new();
+            raw_score_maxes.push(10);
+            raw_score_maxes.push(12);
+
+            let raw_score_maxes2 = chart.get_raw_score_maxes();
+    
+            assert_eq!(raw_score_maxes, *raw_score_maxes2);
+        }
+
+        #[test]
+        fn get_percentile_ranks() {
+            let age_range = &Range::new(20, 24);
+            
+            let scaled_score_range = &Range::new(1, 19);
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let mut percentile_ranks: Vec<f32> = Vec::new();
+            percentile_ranks.push(10.0);
+            percentile_ranks.push(12.3);
+    
+            let chart = Chart::new(*age_range, *scaled_score_range, raw_score_maxes, percentile_ranks);
+
+            let mut percentile_ranks: Vec<f32> = Vec::new();
+            percentile_ranks.push(10.0);
+            percentile_ranks.push(12.3);
+
+            let percentile_ranks2 = chart.get_percentile_ranks();
+    
+            assert_eq!(percentile_ranks, *percentile_ranks2);
         }
     
     }
