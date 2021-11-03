@@ -3,6 +3,7 @@ use std::io;
 
 mod report;
 mod test;
+mod client;
 
 pub fn run() -> Result<(), Box<dyn Error>> {
 
