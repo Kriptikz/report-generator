@@ -6,14 +6,14 @@ mod test;
 mod client;
 mod prints;
 
+use crate::prints::*;
+
 pub fn run() -> Result<(), Box<dyn Error>> {
 
     loop {
-        println!("\nPlease enter a command, (\"help\" for a list of commands):");
+        print_enter_a_command();
 
         let input = get_input();
-
-
 
         let input = &input[..];
         match input {
