@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct Client {
+pub struct Client {
     name: String,
     age: u32,
     test_scores: Vec<TestScore>,

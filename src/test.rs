@@ -7,7 +7,7 @@ struct Range {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct Test {
+pub struct Test {
     name: String,
     indexes: Vec<Index>,
 }
