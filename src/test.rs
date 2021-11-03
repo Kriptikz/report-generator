@@ -45,11 +45,11 @@ impl Range {
         }
     }
 
-    fn get_min(&self) -> u32 {
+    pub fn get_min(&self) -> u32 {
         self.min
     }
 
-    fn get_max(&self) -> u32 {
+    pub fn get_max(&self) -> u32 {
         self.max
     }
 }
@@ -64,11 +64,11 @@ impl Test {
         }
     }
 
-    fn get_name(&self) -> &String {
+    pub fn get_name(&self) -> &String {
         &self.name
     }
 
-    fn get_index(&self, name: String) -> Option<&Index> {
+    pub fn get_index(&self, name: String) -> Option<&Index> {
         for index in &self.indexes {
             if name == index.name {
                 return Some(&index)
@@ -78,7 +78,7 @@ impl Test {
         None
     }
 
-    fn get_indexes(&self) -> Option<&Vec<Index>> {
+    pub fn get_indexes(&self) -> Option<&Vec<Index>> {
         if self.indexes.len() > 0 {
             return Some(&self.indexes)
         }
@@ -97,19 +97,19 @@ impl Index {
         }
     }
 
-    fn get_name(&self) -> &String {
+    pub fn get_name(&self) -> &String {
         &self.name
     }
 
-    fn get_initials(&self) -> &String {
+    pub fn get_initials(&self) -> &String {
         &self.initials
     }
 
-    fn get_equivalents_chart(&self) -> &Chart {
+    pub fn get_equivalents_chart(&self) -> &Chart {
         &self.equivalents_chart
     }
 
-    fn get_subtests(&self) -> Option<&Vec<Subtest>> {
+    pub fn get_subtests(&self) -> Option<&Vec<Subtest>> {
         if self.subtests.len() > 0 {
             return Some(&self.subtests)
         }
@@ -129,23 +129,23 @@ impl Subtest {
         }
     } 
 
-    fn get_name(&self) -> &String {
+    pub fn get_name(&self) -> &String {
         &self.name
     }
 
-    fn get_initials(&self) -> &String {
+    pub fn get_initials(&self) -> &String {
         &self.initials
     }
 
-    fn get_score_range(&self) -> &Range {
+    pub fn get_score_range(&self) -> &Range {
         &self.score_range
     }
 
-    fn is_optional(&self) -> bool {
+    pub fn is_optional(&self) -> bool {
         self.optional
     }
 
-    fn get_charts(&self) -> Option<&Vec<Chart>> {
+    pub fn get_charts(&self) -> Option<&Vec<Chart>> {
         if self.charts.len() > 0 {
             return Some(&self.charts)
         }
@@ -164,19 +164,19 @@ impl Chart {
         }
     }
 
-    fn get_age_range(&self) -> &Range {
+    pub fn get_age_range(&self) -> &Range {
         &self.age_range
     }
 
-    fn get_scaled_score_range(&self) -> &Range {
+    pub fn get_scaled_score_range(&self) -> &Range {
         &self.scaled_score_range
     }
 
-    fn get_raw_score_maxes(&self) -> &Vec<u32>{
+    pub fn get_raw_score_maxes(&self) -> &Vec<u32>{
         &self.raw_score_maxes
     }
 
-    fn get_percentile_ranks(&self) -> &Vec<f32> {
+    pub fn get_percentile_ranks(&self) -> &Vec<f32> {
         &self.percentile_ranks
     }
 }
