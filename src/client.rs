@@ -8,7 +8,7 @@ pub struct Client {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct TestScore {
+pub struct TestScore {
     test_name: String,
     index_name: String,
     subtest_name: String,
@@ -26,6 +26,10 @@ impl Client {
 
     pub fn get_name(&self) -> &String {
         &self.name
+    }
+
+    pub fn get_age(&self) -> u32 {
+        self.age
     }
 
     pub fn get_test_score(&self, test_name: String, index_name: String, subtest_name: String) -> Option<u32> {
@@ -92,6 +96,17 @@ mod testing
             let name2 = client.get_name();
     
             assert_eq!(name.to_string(), *name2);
+        }
+
+        #[test]
+        fn get_age() {
+            let name = "name";
+            let age: u32 = 25;
+    
+            let client = Client::new(name.to_string(), age, Vec::new());
+            let age2 = client.get_age();
+    
+            assert_eq!(age, age2);
         }
 
         #[test]
