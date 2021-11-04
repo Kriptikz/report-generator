@@ -241,7 +241,7 @@ fn get_scaled_score(client: &Client, test: &Test, index_name: &String, subtest_n
         Some(index) => {
             match index.get_subtest(subtest_name) {
                 Some(subtest) => {
-                    for chart in &mut subtest.charts {
+                    for chart in subtest.charts {
                         if client.age <= chart.age_range.max {
                             let mut scaled_score = chart.scaled_score_range.min;
                             for raw_score_max in &mut chart.raw_score_maxes {
