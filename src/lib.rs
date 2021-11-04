@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::io;
 
-//mod report;
+mod report;
 mod test;
 mod client;
 mod prints;

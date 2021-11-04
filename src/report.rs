@@ -221,7 +221,7 @@ fn get_u32_from_string(string: &String) -> u32 {
 fn get_score_as_string(client: &Client, test: &Test, index_name: &String, subtest_name: &String) -> String {
 
     let mut string_scaled_score = String::new();
-    match client.get_test_score(*test.get_name(), *index_name, *subtest_name)
+    match client.get_test_score(test.get_name().to_string(), index_name.to_string(), subtest_name.to_string())
     {
         Some(score) => {
             match get_scaled_score(client, test, index_name, subtest_name, score) {
@@ -237,20 +237,22 @@ fn get_score_as_string(client: &Client, test: &Test, index_name: &String, subtes
 }
 
 fn get_scaled_score(client: &Client, test: &Test, index_name: &String, subtest_name: &String, score: u32) -> Option<u32> {
-    match test.get_index(*index_name) {
+    match test.get_index(index_name.to_string()) {
         Some(index) => {
-            match index.get_subtest(subtest_name) {
+            match index.get_subtest(subtest_name.to_string()) {
                 Some(subtest) => {
-                    for chart in subtest.charts {
-                        if client.age <= chart.age_range.max {
-                            let mut scaled_score = chart.scaled_score_range.min;
-                            for raw_score_max in &mut chart.raw_score_maxes {
+                    match subtest.get_chart(client.get_age()) {
+                        Some(chart) => {
+                            let mut scaled_score = chart.get_scaled_score_range().get_min();
+                            for raw_score_max in &mut chart.get_raw_score_maxes().iter() {
                                 if score <= *raw_score_max {
                                     return Some(scaled_score)
                                 }
                                 scaled_score += 1;
                             }
+                            
                         }
+                        None => (),
                     }
                 }
                 None => (),
@@ -262,7 +264,7 @@ fn get_scaled_score(client: &Client, test: &Test, index_name: &String, subtest_n
     None
 }
 
-fn get_scaled_score_equivalent_as_string(client: &mut Client, test: &mut Test, index_name: &String, subtest_name: &String, score: u32) -> (String, String) {
+fn get_scaled_score_equivalent_as_string(client: &Client, test: &Test, index_name: &String, subtest_name: &String, score: u32) -> (String, String) {
 
     let mut string_scaled_score = String::new();
     let mut string_rank = String::new();
@@ -279,20 +281,20 @@ fn get_scaled_score_equivalent_as_string(client: &mut Client, test: &mut Test, i
     (string_scaled_score, string_rank)
 }
 
-fn get_scaled_score_equivalent(client: &mut Client, test: &mut Test, index_name: &String, subtest_name: &String, score: u32) -> Option<(u32, f32)> {
-    match test.has_index(index_name) {
+fn get_scaled_score_equivalent(client: &Client, test: &Test, index_name: &String, subtest_name: &String, score: u32) -> Option<(u32, f32)> {
+    match test.get_index(index_name.to_string()) {
         Some(index) => {
             // find out spot in the raw_score_maxes_equivalents using a counter
             let mut counter: u32 = 0;
-            for sum in index.equivalents_chart.scaled_score_range.min..index.equivalents_chart.scaled_score_range.max {
+            for sum in index.get_equivalents_chart().get_scaled_score_range().get_min()..index.get_equivalents_chart().get_scaled_score_range().get_max() {
                 if sum == score {
                     break;
                 }
                 counter += 1;
             }
 
-            let equivalent = index.equivalents_chart.raw_score_maxes[counter as usize];
-            let rank = index.equivalents_chart.percentile_ranks[counter as usize];
+            let equivalent = index.get_equivalents_chart().get_raw_score_maxes()[counter as usize];
+            let rank = index.get_equivalents_chart().get_percentile_ranks()[counter as usize];
 
             return Some((equivalent, rank))
         }
