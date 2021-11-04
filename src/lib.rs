@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::io;
 
-mod report;
+//mod report;
 mod test;
 mod client;
 mod prints;
@@ -27,7 +27,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         match input {
             "exit" => break,
             "help" => print_help_menu(),
-            "generate report" => generate_report(&clients, &tests)
+            "generate report" => generate_report(&clients, &tests),
             _ => println!("Error: No maching command: {}", input),
         }
     }
