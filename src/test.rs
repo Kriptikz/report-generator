@@ -155,6 +155,17 @@ impl Subtest {
         self.optional
     }
 
+    pub fn get_chart(&self, age: u32) -> Option<&Chart>{
+        for chart in &self.charts {
+            if chart.age_range.min <= age && age <= chart.age_range.max {
+                return Some(&chart)
+            }
+        }
+
+        None
+    }
+
+
     pub fn get_charts(&self) -> Option<&Vec<Chart>> {
         if self.charts.len() > 0 {
             return Some(&self.charts)
@@ -523,7 +534,44 @@ mod testing
         }
 
         #[test]
-        fn get_charts() {
+        pub fn get_chart() {
+            let subtest_name = "Subtest_name";
+            let subtest_initials = "SN";
+            let range = &Range::new(1, 12);
+            let optional = false;
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let percentile_ranks: Vec<f32> = Vec::new();
+    
+            let mut charts: Vec<Chart> = Vec::new();
+            let chart = Chart::new(*range, *range, raw_score_maxes, percentile_ranks);
+            charts.push(chart);
+
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let percentile_ranks: Vec<f32> = Vec::new();
+    
+            let range2 = &Range::new(2,9);
+            let chart_error = Chart::new(*range2, *range2, raw_score_maxes, percentile_ranks);
+
+            let raw_score_maxes: Vec<u32> = Vec::new();
+            let percentile_ranks: Vec<f32> = Vec::new();
+    
+            let subtest = Subtest::new(subtest_name.to_string(), subtest_initials.to_string(), *range, optional, charts);
+    
+            let chart = Chart::new(*range, *range, raw_score_maxes, percentile_ranks);
+
+            let age = 10;
+    
+            let chart2: &Chart;
+            match subtest.get_chart(age) {
+                Some(chart) => chart2 = &chart,
+                None => chart2 = &chart_error,
+            }
+    
+            assert_eq!(chart, *chart2);
+        }
+
+        #[test]
+        pub fn get_charts() {
             let subtest_name = "Subtest_name";
             let subtest_initials = "SN";
             let range = &Range::new(1, 12);
