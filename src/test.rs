@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Copy)]
-struct Range {
+pub struct Range {
     min: u32,
     max: u32,
 }
@@ -13,7 +13,7 @@ pub struct Test {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct Index {
+pub struct Index {
     name: String,
     initials: String,
     equivalents_chart: Chart,
@@ -21,7 +21,7 @@ struct Index {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct Subtest {
+pub struct Subtest {
     name: String,
     initials: String,
     score_range: Range,
@@ -30,7 +30,7 @@ struct Subtest {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct Chart {
+pub struct Chart {
     age_range: Range,
     scaled_score_range: Range,
     raw_score_maxes: Vec<u32>,
@@ -107,6 +107,16 @@ impl Index {
 
     pub fn get_equivalents_chart(&self) -> &Chart {
         &self.equivalents_chart
+    }
+
+    pub fn get_subtest(&self, name: String) -> Option<&Subtest> {
+        for subtest in &self.subtests {
+            if subtest.name == name {
+                return Some(&subtest)
+            }
+        }
+
+        None
     }
 
     pub fn get_subtests(&self) -> Option<&Vec<Subtest>> {
@@ -367,6 +377,34 @@ mod testing
             let equiv_chart2 = index.get_equivalents_chart();
     
             assert_eq!(equiv_chart, *equiv_chart2);
+        }
+
+        #[test]
+        fn get_subest() {
+            let index_name = "Index_name";
+            let index_initials = "IN";
+            let subtest_name = "Subtest_name";
+            let subtest_initials = "SN";
+            let range = &Range {min: 1, max: 12};
+            let optional = false;
+    
+            let mut subtests: Vec<Subtest> = Vec::new();
+            let subtest = Subtest::new(subtest_name.to_string(), subtest_initials.to_string(), *range, optional, Vec::new());
+            subtests.push(subtest);
+    
+            let subtest_error = Subtest::new("Error".to_string(), "ERROR".to_string(), *range, optional, Vec::new());
+    
+            let index = Index::new(index_name.to_string(), index_initials.to_string(), default_chart(), subtests);
+
+            let subtest = Subtest::new(subtest_name.to_string(), subtest_initials.to_string(), *range, optional, Vec::new());
+    
+            let subtest2: &Subtest;
+            match index.get_subtest(subtest_name.to_string()) {
+                Some(subtest) => subtest2 = &subtest,
+                None => subtest2 = &subtest_error,
+            }
+    
+            assert_eq!(subtest, *subtest2);
         }
 
         #[test]
