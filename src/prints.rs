@@ -1,4 +1,5 @@
 use std::io;
+use crate::test::*;
 
 pub fn print_enter_a_command() {
     println!("\nPlease enter a command, (\"help\" for a list of commands):");
@@ -30,4 +31,21 @@ pub fn print_help_menu() {
     println!("save client       -    save a client from program into a file." );
     println!("load client       -    load a client from a file into the program.");
     println!("exit              -    exits the program.\n");
+}
+
+pub fn print_select_a_test(tests: &Vec<Test>) {
+    println!("\nPlease select a test");
+    print_loaded_tests(tests);
+}
+
+pub fn print_loaded_tests(tests: &Vec<Test>) {
+    let mut tests_list: String = String::new();
+
+    for test in tests {
+        tests_list.push_str(&test.get_name());
+        tests_list.push(',');
+        tests_list.push(' ');
+    }
+
+    println!("Loaded Tests: {}", tests_list);
 }
