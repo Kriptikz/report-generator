@@ -1,5 +1,6 @@
 use std::io;
 use crate::test::*;
+use crate::client::*;
 
 pub fn print_enter_a_command() {
     println!("\nPlease enter a command, (\"help\" for a list of commands):");
@@ -48,4 +49,65 @@ pub fn print_loaded_tests(tests: &Vec<Test>) {
     }
 
     println!("Loaded Tests: {}", tests_list);
+}
+
+pub fn print_select_index(test: &mut Test) {
+    println!("\nPlease select an index");
+    print_loaded_indexes(&test);
+}
+
+pub fn print_loaded_indexes(test: &Test) {
+    let mut indexes_list: String = String::new();
+
+    match test.get_indexes() {
+        Some(indexes) => {
+            for index in indexes {
+                indexes_list.push_str(index.get_name());
+                indexes_list.push(',');
+                indexes_list.push(' ');
+            }
+        }
+        None => indexes_list.push_str(&String::from("None")),
+    }
+
+    println!("Loaded Indexes: {}", indexes_list);
+}
+
+pub fn print_select_subtest(index: &Index) {
+    println!("\nPlease select a subtest");
+    print_loaded_subtests(&index);
+}
+
+pub fn print_loaded_subtests(index: &Index) {
+    let mut subtests_list: String = String::new();
+
+    match index.get_subtests() {
+        Some(subtests) => {
+            for subtest in subtests {
+                subtests_list.push_str(subtest.get_name());
+                subtests_list.push(',');
+                subtests_list.push(' ');
+            }
+        }
+        None => subtests_list.push_str(&String::from("None")),
+    }
+
+    println!("Loaded subtests: {}", subtests_list);
+}
+
+pub fn print_select_client(clients: &Vec<Client>) {
+    println!("\nPlease select a client");
+    print_loaded_clients(clients);
+}
+
+pub fn print_loaded_clients(clients: &Vec<Client>) {
+    let mut clients_list: String = String::new();
+
+    for client in clients {
+        clients_list.push_str(client.get_name());
+        clients_list.push(',');
+        clients_list.push(' ');
+    }
+
+    println!("Loaded Clients: {}", clients_list);
 }
