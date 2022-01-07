@@ -27,23 +27,23 @@ pub struct ClientSubtest {
 }
 
 impl Client {
-    pub fn new(name: String, age: u32) -> Client {
-        let mut client = Client {
+    pub fn new(name: String, age: u32, tests: Vec<ClientTest>) -> Client {
+        let client = Client {
             name: name,
             age: age,
-            tests: Vec::new(),
+            tests: tests,
         };
 
-        loop {
-            println!("\nWould you like to add a test?");
-            let input = get_input();
-        
-            match &input[..] {
-                "yes" => client.add_test(),
-                "no" => break,
-                _ => println!("\nEnter 'yes' or 'no'."),
-            }
-        }
+        //loop {
+        //    println!("\nWould you like to add a test?");
+        //    let input = get_input();
+        //
+        //    match &input[..] {
+        //        "yes" => client.add_test(),
+        //        "no" => break,
+        //        _ => println!("\nEnter 'yes' or 'no'."),
+        //    }
+        //}
 
         client
     }
@@ -61,10 +61,10 @@ impl Client {
         false
     }
 
-    pub fn add_test(&mut self) {
-        let test = ClientTest::new(self);
-        self.tests.push(test);
-    }
+    //pub fn add_test(&mut self) {
+    //    let test = ClientTest::new(self);
+    //    self.tests.push(test);
+    //}
 
     pub fn has_test(&mut self, name: &String) -> Option<&mut ClientTest> {
         for test in &mut self.tests {
@@ -96,43 +96,44 @@ impl Client {
 }
 
 impl ClientTest {
-    pub fn new(client: &mut Client) -> ClientTest {
-        let mut name;
-        loop {
-            println!("\nPlease enter test name:");
-            name = get_input();
+    pub fn new(name: &String, indexes: Vec<ClientIndex>) -> ClientTest {
+        //let mut name;
+        //loop {
+        //    println!("\nPlease enter test name:");
+        //    name = get_input();
+//
+        //    match client.has_test(&name) {
+        //        Some(_) => (),
+        //        None => break,
+        //    }
+//
+        //    println!("Error: ClientTest with name '{}' already exists.", &name);
+        //}
 
-            match client.has_test(&name) {
-                Some(_) => (),
-                None => break,
-            }
-
-            println!("Error: ClientTest with name '{}' already exists.", &name);
-        }
-
-        let mut test = ClientTest {
-            name: name,
-            indexes: Vec::new(),
+        //let mut test = ClientTest {
+        let test = ClientTest {
+            name: name.to_string(),
+            indexes: indexes,
         };
 
-        loop {
-            println!("\nWould you like to add an index for this test?");
-            let input = get_input();
-
-            match &input[..] {
-                "yes" => test.add_index(),
-                "no" => break,
-                _ => println!("\nEnter 'yes' or 'no'.")
-            }
-        }
+        //loop {
+        //    println!("\nWould you like to add an index for this test?");
+        //    let input = get_input();
+//
+        //    match &input[..] {
+        //        "yes" => test.add_index(),
+        //        "no" => break,
+        //        _ => println!("\nEnter 'yes' or 'no'.")
+        //    }
+        //}
 
         test
     }
 
-    pub fn add_index(&mut self) {
-        let index = ClientIndex::new(self);
-        self.indexes.push(index);
-    }
+    //pub fn add_index(&mut self) {
+    //    let index = ClientIndex::new(self);
+    //    self.indexes.push(index);
+    //}
 
     pub fn has_index(&mut self, name: &String) -> Option<&mut ClientIndex> {
         for index in &mut self.indexes {
@@ -146,43 +147,43 @@ impl ClientTest {
 }
 
 impl ClientIndex {
-    pub fn new(test: &mut ClientTest) -> ClientIndex {
-        let mut name;
-        loop {
-            println!("\nPlease enter the index name:");
-            name = get_input();
+    pub fn new(name: &String, subtests: Vec<ClientSubtest>) -> ClientIndex {
+        //let mut name;
+        //loop {
+        //    println!("\nPlease enter the index name:");
+        //    name = get_input();
+//
+        //    match test.has_index(&name) {
+        //        Some(_) => (),
+        //        None => break,
+        //    }
+//
+        //    println!("Error: Index with name'{}' already exists.", &name);
+        //}
 
-            match test.has_index(&name) {
-                Some(_) => (),
-                None => break,
-            }
-
-            println!("Error: Index with name'{}' already exists.", &name);
-        }
-
-        let mut index = ClientIndex {
-            name: name,
-            subtests: Vec::new(),
+        let index = ClientIndex {
+            name: name.to_string(),
+            subtests: subtests,
         };
 
-        loop {
-            println!("\nWould you like to add a subtest score for this index?");
-            let input = get_input();
-
-            match &input[..] {
-                "yes" => index.add_subtest(),
-                "no" => break,
-                _ => println!("\nEnter 'yes' or 'no'.")
-            }
-        }
+        //loop {
+        //    println!("\nWould you like to add a subtest score for this index?");
+        //    let input = get_input();
+//
+        //    match &input[..] {
+        //        "yes" => index.add_subtest(),
+        //        "no" => break,
+        //        _ => println!("\nEnter 'yes' or 'no'.")
+        //    }
+        //}
 
         index
     }
 
-    pub fn add_subtest(&mut self) {
-        let subtest = ClientSubtest::new(self);
-        self.subtests.push(subtest);
-    }
+    //pub fn add_subtest(&mut self) {
+    //    let subtest = ClientSubtest::new(self);
+    //    self.subtests.push(subtest);
+    //}
 
     pub fn has_subtest(&mut self, name: &String) -> Option<&mut ClientSubtest> {
         for subtest in &mut self.subtests {
@@ -196,25 +197,25 @@ impl ClientIndex {
 }
 
 impl ClientSubtest {
-    pub fn new(index: &mut ClientIndex) -> ClientSubtest {
-        let mut name;
-        loop {
-            println!("\nPlease enter the subtest name:");
-            name = get_input();
-
-            match index.has_subtest(&name) {
-                Some(_) => (),
-                None => break,
-            }
-
-            println!("Error: Subtest with name'{}' already exists.", &name);
-        }
-
-        println!("Please enter the score: ");
-        let score: u32 = get_input().parse().expect("Please enter a number!");
+    pub fn new(name: &String, score: u32) -> ClientSubtest {
+        //let mut name;
+        //loop {
+        //    println!("\nPlease enter the subtest name:");
+        //    name = get_input();
+//
+        //    match index.has_subtest(&name) {
+        //        Some(_) => (),
+        //        None => break,
+        //    }
+//
+        //    println!("Error: Subtest with name'{}' already exists.", &name);
+        //}
+//
+        //println!("Please enter the score: ");
+        //let score: u32 = get_input().parse().expect("Please enter a number!");
 
         ClientSubtest {
-            name: name,
+            name: name.to_string(),
             score: score,
         }
     }

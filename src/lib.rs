@@ -228,18 +228,98 @@ fn show_loaded_data(tests: &Vec<Test>) {
 }
 
 fn add_client(clients: &mut Vec<Client>) {
-    println!("\nPlease enter a client name:");
-    let name = get_input();
-    println!("\nPlease enter the clients age:");
-    let age = get_input().parse().expect("\nPlease enter a number!");
+    //println!("\nPlease enter a client name:");
+    //let name = get_input();
+    //println!("\nPlease enter the clients age:");
+    //let age = get_input().parse().expect("\nPlease enter a number!");
+//
+    //let mut client_position: u32 = 0;
+    //if Client::is_client_loaded(&clients, &name, &mut client_position) {
+    //    println!("Error: Client with name '{}' is already loaded.", &name);
+    //    return
+    //}
+//
+    //clients.push(Client::new(name, age));
 
-    let mut client_position: u32 = 0;
-    if Client::is_client_loaded(&clients, &name, &mut client_position) {
-        println!("Error: Client with name '{}' is already loaded.", &name);
-        return
+
+    println!("\nPlease enter client info, use initials for Test, Index, and Subtest:");
+    println!("\nFirst Last Age Test Index Subtest Score");
+    let input = get_input();
+    let mut client_name = String::new();
+    let mut cname_is_set = false;
+    let mut age_string = String::new();
+    let mut age_is_set = false;
+    let mut test_name = String::new();
+    let mut tname_is_set = false;
+    let mut index_name = String::new();
+    let mut iname_is_set = false;
+    let mut subtest_name = String::new();
+    let mut sname_is_set = false;
+    let mut score_string = String::new();
+    let mut score_is_set = false;
+    let mut skipped = false;
+
+    for i in input.chars() {
+        if i == ' ' {
+            if skipped == false {
+                skipped = true;
+                client_name.push(i);
+            }
+
+            if !cname_is_set {
+                cname_is_set = true;
+            } else if !age_is_set {
+                age_is_set = true;
+            } else if !tname_is_set {
+                tname_is_set = true;
+            } else if !iname_is_set {
+                iname_is_set = true;
+            } else if !sname_is_set {
+                sname_is_set = true;
+            } else if !score_is_set {
+                score_is_set = true;
+            }
+
+            continue;
+        }
+
+
+        if !cname_is_set {
+            client_name.push(i);
+            continue;
+        } else if !age_is_set {
+            age_string.push(i);
+            continue;
+        } else if !tname_is_set {
+            test_name.push(i);
+            continue;
+        } else if !iname_is_set {
+            index_name.push(i);
+            continue;
+        } else if !sname_is_set {
+            subtest_name.push(i);
+            continue;
+        } else if !score_is_set {
+            score_string.push(i);
+        }
+
     }
 
-    clients.push(Client::new(name, age));
+    let score: u32 = score_string.parse().expect("Error: score_string is NaN!");
+    let subtest = ClientSubtest::new(&subtest_name, score);
+    let mut subtests = Vec::new();
+    subtests.push(subtest);
+
+    let index = ClientIndex::new(&index_name, subtests);
+    let mut indexes = Vec::new();
+    indexes.push(index);
+
+    let test = ClientTest::new(&test_name, indexes);
+    let mut tests = Vec::new();
+    tests.push(test);
+
+    let age: u32 = age_string.parse().expect("Error: age_string is NaN!");
+    let client = Client::new(client_name, age, tests);
 }
 
 fn edit_client(clients: &mut Vec<Client>) {
